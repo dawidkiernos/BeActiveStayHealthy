@@ -1,0 +1,238 @@
+<Content>
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "200dp"
+
+    MDTextField:
+    	id: textfield_city
+        hint_text: "City"
+        text:'Warsaw'
+
+    MDTextField:
+    	id: textfield_state
+        hint_text: "State"
+        text:'Mazovia'
+
+    MDTextField:
+    	id: textfield_country
+    	hint_text:'Country'
+    	text:'Poland'
+
+    MDLabel:
+    	id: labeltest
+    	text:''
+
+<dbContent>
+    orientation: "vertical"
+    spacing: "12dp"
+    size_hint_y: None
+    height: "250dp"
+	MDTextField:
+		id:table_date
+		hint_text:'Date'
+		text:app.today
+	MDTextField:
+		id:table_distance
+		hint_text:'Distance km'
+		text:''
+	MDTextField:
+		id:table_speed
+		hint_text: 'Average speed km/h'
+	MDRaisedButton:
+		text:'Ok'
+		on_release:app.add_to_db()
+
+
+<score_dialog>
+	orientation:'vertical'
+	height: "150dp"
+	size_hint_y: None
+
+	MDTextField:
+    	id:km
+    	hint_text:'Your weekly kilometer goal:'
+    	text:''
+    MDTextField:
+    	id:weight
+    	hint_text:'Your weight'
+
+    MDRaisedButton:
+    	text:'OK'
+    	on_release:
+    		app.update_progress()
+    		app.dialog_score.dismiss()
+    		
+MDBoxLayout:
+    orientation:'vertical'
+
+    MDToolbar:
+        title: 'Be active & stay healthy'
+        md_bg_color:get_color_from_hex('2596be')
+        specific_text_color: 1,1,1,1
+        text_color_active: 0, 0, 0, 1
+
+    MDBottomNavigation:
+    	panel_color: get_color_from_hex('2596be')
+        selected_color_background: get_color_from_hex("#97ecf8")
+        text_color_active: 0, 0, 0, 1
+
+        MDBottomNavigationItem:
+        	
+            name: 'screen 1'
+            text: 'Weather'
+            icon: 'cloud'
+            MDFloatLayout:
+
+                MDGridLayout:
+                    cols:1
+                    rows:2
+                    size_hint:.4,.7
+                    pos_hint: {'center_x': .25, 'center_y': .5}
+                    halign:'left'
+                    MDList:
+                        TwoLineAvatarIconListItem:
+                            id:city
+                            text:'City'
+                            secondary_text:''
+
+                            ImageLeftWidget:
+                                source:'images/city.png'
+
+                        TwoLineAvatarIconListItem:
+                            id:pollution
+                            text: "Pollution"
+                            #background_normal: ''
+                            secondary_text:''
+                            background_color: (0,0,1,1)
+
+                            ImageLeftWidget:
+                                source:'images/pollution.png'
+                            IconRightWidget:
+                                id:question_mark
+                                icon:''
+                                on_release:app.dialog_text()
+
+                        TwoLineAvatarIconListItem:
+                            id:weather
+                            text: "Weather"
+                            secondary_text:''
+
+                            ImageLeftWidget:
+                                source:'images/weather-forecast.png'
+                            IconRightWidget:
+                                id:weather_icon
+                                icon: ''
+
+                        TwoLineAvatarIconListItem:
+                            id:wind
+                            text:'Wind'
+                            secondary_text:''
+                            ImageLeftWidget:
+                                source:'images/wind.png'
+
+                    Button: 
+                        text:'choose your city'
+                        background_color:('2596be')
+                        #pos_hint: {'right': .7, 'center_y': .9}
+                        on_release: app.show_alert_dialog()
+            
+                Image:
+                    size_hint: .5, .5
+                    pos_hint: {"center_x":0.7, "center_y": .5}  
+                    source:'images/run.gif'      	
+
+
+        MDBottomNavigationItem:
+            name: 'screen 2'
+            text: 'Stats'
+            icon: 'run'
+            on_tab_press:
+            	if app.statistics == 0: app.choose_week_score() 
+            	else: app.update_progress() 
+            BoxLayout:
+				orientation: "vertical"
+				size: root.width, root.height
+				
+				MDLabel:
+					id: my_label
+					text: "progress"
+					halign:'center'
+				ProgressBar:
+					id: my_progress_bar
+					# Set Default Value
+					# value: .25
+					min: 0
+					max: 1
+					pos_hint: {'x':.1}
+					size_hint_x: .8
+
+				MDRaisedButton:
+					text: "Change goal or weight"
+					pos_hint:{'center_x':.5}
+					on_press:app.choose_week_score()
+
+				MDGridLayout:
+					cols:2
+					MDList:
+						TwoLineAvatarListItem:
+							id:today_km
+							text:'Kilometers today'
+							secondary_text:''
+
+							IconLeftWidget:
+								icon:"run"
+
+						TwoLineAvatarListItem:
+							id:today_calories
+							text:'Calories burned today'
+							IconLeftWidget:
+								icon:'fire'
+					MDList:
+						TwoLineAvatarListItem:
+							id:week_km
+							text:'Kilometers this week'
+							secondary_text:''
+							IconLeftWidget:
+								icon:'run'
+
+						TwoLineAvatarListItem:
+							id:week_calories
+							text:'Calories burned this week'
+							IconLeftWidget:
+								icon:'fire'
+
+				
+
+        MDBottomNavigationItem:
+            name: 'screen 3'
+            text: 'Diary'
+            icon: 'calendar'
+            on_tab_press: app.add_datatable()
+
+            MDBoxLayout:
+		        orientation: 'vertical'
+		        padding: 10
+		        AnchorLayout:
+		            id: data_layout
+		        MDBoxLayout:
+		        	orientation:'horizontal'
+		        	size_hint:1,.05
+		        	#pos_hint:{'center_x':0.5, "center_y":0.5}
+		        	MDLabel:
+		        		text:''
+			        MDRaisedButton:
+			        	text:'Add new run'
+			            on_release: app.dialog_add_to_table()
+			        MDRaisedButton:
+			        	text:'Delete row'
+			        	on_release:
+			        		app.delete_row()
+			        		app.update_progress()
+			        MDLabel:
+			        	text:''
+
+		        
+            
+
+
